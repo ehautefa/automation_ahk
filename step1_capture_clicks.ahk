@@ -1,13 +1,13 @@
-; STEP 1: Screenshot Capture on Click
-; This script captures a screenshot every time you click
-; Use this ONCE to capture all your buttons
+; ÉTAPE 1 : Capture d'Écran au Clic - VERSION SIMPLIFIÉE
+; Ce script capture une capture d'écran à chaque fois que vous cliquez
+; Utilisez ceci UNE SEULE FOIS pour capturer tous vos boutons
 ;
-; HOW TO USE:
-; 1. Run this script
-; 2. Press F1 to START recording
-; 3. Click each button you want to automate (one by one)
-; 4. Press ESC to STOP recording
-; 5. Screenshots are saved and ready for the automation script!
+; COMMENT L'UTILISER :
+; 1. Lancez ce script
+; 2. Appuyez sur F1 pour DÉMARRER l'enregistrement
+; 3. Cliquez sur chaque bouton que vous voulez automatiser (un par un)
+; 4. Appuyez sur ESC pour ARRÊTER l'enregistrement
+; 5. Les captures d'écran sont sauvegardées et prêtes pour le script d'automatisation !
 
 #SingleInstance Force
 SetWorkingDir %A_ScriptDir%
@@ -16,32 +16,31 @@ FileCreateDir, button_images
 ; Variables
 isRecording := false
 clickCount := 0
-positions := []
 
-; Press F1 to start recording clicks
+; Appuyez sur F1 pour démarrer l'enregistrement
 F1::
     global isRecording, clickCount
     
     if (isRecording) {
-        MsgBox, Already recording! Press ESC to stop.
+        MsgBox, Déjà en cours d'enregistrement ! Appuyez sur ESC pour arrêter.
         return
     }
     
     isRecording := true
     clickCount := 0
     
-    MsgBox, 4, Start Recording?, 
+    MsgBox, 4, Démarrer l'enregistrement ?, 
     (
-    CLICK RECORDING MODE
+    MODE D'ENREGISTREMENT DES CLICS
     
-    The script will now:
-    1. Capture a screenshot after each click you make
-    2. Save the button position
-    3. Save the screenshot as button1.png, button2.png, etc.
+    Le script va maintenant :
+    1. Capturer une capture d'écran après chaque clic que vous faites
+    2. Sauvegarder la position du bouton
+    3. Sauvegarder la capture d'écran comme button1.png, button2.png, etc.
     
-    Click YES to start recording.
-    Then click each button you want to automate.
-    Press ESC when done.
+    Cliquez OUI pour commencer l'enregistrement.
+    Ensuite cliquez sur chaque bouton que vous voulez automatiser.
+    Appuyez sur ESC quand vous avez terminé.
     )
     
     IfMsgBox No
@@ -50,121 +49,44 @@ F1::
         return
     }
     
-    ToolTip, 🔴 RECORDING - Click your buttons - ESC to stop
+    ToolTip, [ENREGISTREMENT] - Cliquez sur vos boutons - ESC pour arrêter
     
-    ; Enable click monitoring
+    ; Activer la surveillance des clics
     Hotkey, ~LButton, OnLeftClick, On
 return
 
-; This triggers when you left-click anywhere
+; Ceci se déclenche quand vous cliquez gauche n'importe où
 OnLeftClick:
-    global isRecording, clickCount, positions
+    global isRecording, clickCount
     
     if (!isRecording)
         return
     
-    ; Wait for click to complete
+    ; Attendre que le clic se termine
     Sleep, 100
     
-    ; Get click position
+    ; Obtenir la position du clic
     MouseGetPos, mouseX, mouseY
     
-    ; Increment counter
+    ; Incrémenter le compteur
     clickCount++
     
-    ; Save position
-    positions[clickCount] := {x: mouseX, y: mouseY}
-    
-    ; Show feedback
-    ToolTip, 📸 Captured button %clickCount% at (%mouseX%, %mouseY%)
+    ; Afficher le retour
+    ToolTip, Capturé bouton %clickCount% à (%mouseX%, %mouseY%)
     SoundBeep, 1000, 100
     
-    ; Wait a moment
+    ; Attendre un moment
     Sleep, 500
     
-    ; Capture screenshot of the button area
-    CaptureButtonArea(mouseX, mouseY, clickCount)
-    
-    ; Save position to file
+    ; Sauvegarder la position dans le fichier
     IniWrite, %mouseX%, button_positions.ini, Positions, Button%clickCount%_X
     IniWrite, %mouseY%, button_positions.ini, Positions, Button%clickCount%_Y
     
-    ; Update tooltip
-    ToolTip, 🔴 RECORDING - Button %clickCount% saved - ESC to stop
+    ; Mettre à jour le tooltip
+    ToolTip, [ENREGISTREMENT] - Bouton %clickCount% sauvegardé - ESC pour arrêter
 return
 
-; Capture a screenshot of the button area
-CaptureButtonArea(centerX, centerY, buttonNum)
-{
-    ; Size of area to capture around click point
-    width := 150
-    height := 50
-    
-    ; Calculate capture area (centered on click)
-    x := centerX - (width // 2)
-    y := centerY - (height // 2)
-    
-    ; Ensure coordinates are not negative
-    if (x < 0)
-        x := 0
-    if (y < 0)
-        y := 0
-    
-    ; Filename
-    filename := A_ScriptDir . "\button_images\button" . buttonNum . ".png"
-    
-    ; Take screenshot using PrintScreen method (simple and reliable)
-    ; Capture full screen first
-    Send {PrintScreen}
-    Sleep, 200
-    
-    ; Try GDI+ capture for better quality
-    CaptureScreenRegion(x, y, width, height, filename)
-    
-    return
-}
-
-; Simple screen capture function
-CaptureScreenRegion(x, y, w, h, filename)
-{
-    ; Get screen DC
-    hDC := DllCall("GetDC", "Ptr", 0, "Ptr")
-    hDC2 := DllCall("CreateCompatibleDC", "Ptr", hDC, "Ptr")
-    hBM := DllCall("CreateCompatibleBitmap", "Ptr", hDC, "Int", w, "Int", h, "Ptr")
-    
-    ; Select bitmap into DC
-    DllCall("SelectObject", "Ptr", hDC2, "Ptr", hBM)
-    
-    ; Copy screen region to bitmap
-    DllCall("BitBlt", "Ptr", hDC2, "Int", 0, "Int", 0, "Int", w, "Int", h, "Ptr", hDC, "Int", x, "Int", y, "UInt", 0x00CC0020)
-    
-    ; Save to clipboard as backup
-    DllCall("OpenClipboard", "Ptr", 0)
-    DllCall("EmptyClipboard")
-    DllCall("SetClipboardData", "UInt", 2, "Ptr", hBM)
-    DllCall("CloseClipboard")
-    
-    ; Save to file using simple method
-    ; Since we have it in clipboard, we can paste it
-    SaveClipboardImage(filename)
-    
-    ; Cleanup
-    DllCall("DeleteDC", "Ptr", hDC2)
-    DllCall("ReleaseDC", "Ptr", 0, "Ptr", hDC)
-    
-    return
-}
-
-; Save clipboard image to file
-SaveClipboardImage(filename)
-{
-    ; Use PowerShell to save clipboard image
-    psCommand := "Add-Type -AssemblyName System.Windows.Forms; $img = [Windows.Forms.Clipboard]::GetImage(); if ($img) { $img.Save('" . filename . "', [System.Drawing.Imaging.ImageFormat]::Png) }"
-    
-    RunWait, powershell.exe -WindowStyle Hidden -Command "%psCommand%", , Hide
-}
-
-; Press ESC to stop recording
+; Appuyez sur ESC pour arrêter l'enregistrement
 Esc::
     global isRecording, clickCount
     
@@ -175,45 +97,45 @@ Esc::
     
     isRecording := false
     
-    ; Disable click monitoring
+    ; Désactiver la surveillance des clics
     Hotkey, ~LButton, OnLeftClick, Off
     
     ToolTip
     
     MsgBox, 
     (
-    ✅ RECORDING COMPLETE!
+    === ENREGISTREMENT TERMINÉ ===
     
-    Captured %clickCount% button(s).
+    Capturé %clickCount% bouton(s).
     
-    Files saved:
-    - button_positions.ini (button coordinates)
-    - button_images\button1.png, button2.png, etc.
+    Fichiers sauvegardés :
+    - button_positions.ini (coordonnées des boutons)
     
-    Next step:
-    Run the AUTOMATION script to automatically click these buttons!
+    Prochaine étape :
+    Lancez le script d'AUTOMATISATION pour cliquer automatiquement sur ces boutons !
     
-    Press OK to exit.
+    Appuyez sur OK pour quitter.
     )
     
     ExitApp
 return
 
-; Ctrl+Esc to force exit
+; Ctrl+Esc pour forcer la sortie
 ^Esc::ExitApp
 
-; Startup message
+; Message de démarrage
 MsgBox, 
 (
-🎯 BUTTON CAPTURE SCRIPT
+=== SCRIPT DE CAPTURE DE BOUTONS ===
 
-This script will capture screenshots when you click.
+Ce script capturera les positions quand vous cliquez.
 
-INSTRUCTIONS:
-1. Press F1 to START recording
-2. Click each button you want to automate
-3. After each click, a screenshot is saved
-4. Press ESC when finished
+INSTRUCTIONS :
+1. Appuyez sur F1 pour DÉMARRER l'enregistrement
+2. Cliquez sur chaque bouton que vous voulez automatiser
+3. Après chaque clic, la position est sauvegardée
+4. Appuyez sur ESC quand vous avez terminé
 
-Ready? Press F1 to begin!
+Prêt ? Appuyez sur F1 pour commencer !
 )
+
