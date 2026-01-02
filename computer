@@ -1,0 +1,9 @@
+[PSCustomObject]@{
+    Modele   = (Get-CimInstance Win32_ComputerSystem).Model
+    OS       = (Get-CimInstance Win32_OperatingSystem).Caption
+    CPU      = (Get-CimInstance Win32_Processor).Name
+    RAM_GB   = [math]::Round((Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1GB)
+    Stockage_GB = [math]::Round((Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3" | Measure-Object Size -Sum).Sum / 1GB)
+    Serial   = (Get-CimInstance Win32_BIOS).SerialNumber
+    Statut   = "En service"
+}
