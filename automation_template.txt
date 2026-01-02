@@ -1,0 +1,37 @@
+; Script d'Automatisation : {SCRIPT_NAME}
+; Généré automatiquement par step2_generate_automation.ahk
+; Touche de raccourci : {HOTKEY}
+
+#Requires AutoHotkey v2.0
+#SingleInstance Force
+SetWorkingDir(A_ScriptDir)
+
+; Rendre le script DPI-aware
+DllCall("SetThreadDpiAwarenessContext", "Ptr", -3, "Ptr")
+
+; Définir le mode de coordonnées
+CoordMode("Mouse", "Screen")
+CoordMode("Pixel", "Screen")
+
+; Message de démarrage
+MsgBox("=== {SCRIPT_NAME} ===`n`nScript d'automatisation prêt !`n`nAppuyez sur {HOTKEY} pour lancer l'automatisation.`nAppuyez sur ESC pour quitter.")
+
+; Touche de raccourci pour lancer l'automatisation
+{HOTKEY}:: {
+    RunAutomation()
+}
+
+; Fonction d'automatisation principale
+RunAutomation() {
+    ToolTip("Démarrage de l'automatisation...")
+    Sleep(500)
+
+{BUTTON_CLICKS}
+
+    ToolTip("Automatisation terminée !")
+    Sleep(2000)
+    ToolTip()
+}
+
+; ESC pour quitter
+Esc::ExitApp()

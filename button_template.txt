@@ -1,0 +1,17 @@
+    ; Bouton {BUTTON_NUM}
+    ; Déplacer la souris au coin pour enlever tout effet hover
+    MouseMove(A_ScreenWidth - 10, A_ScreenHeight - 10, 0)
+    Sleep(150)
+
+    ToolTip("Recherche du bouton {BUTTON_NUM}...")
+    if (ImageSearch(&x, &y, 0, 0, A_ScreenWidth, A_ScreenHeight, "*50 images\button{BUTTON_NUM}.png")) {
+        MouseMove(x, y)
+        Sleep(100)
+        Click()
+        ToolTip("Bouton {BUTTON_NUM} cliqué !")
+        Sleep({TIMING})
+    } else {
+        ToolTip("ERREUR : Bouton {BUTTON_NUM} introuvable !")
+        Sleep(2000)
+        return
+    }
