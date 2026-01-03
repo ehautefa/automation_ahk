@@ -7,3 +7,9 @@
     Serial   = (Get-CimInstance Win32_BIOS).SerialNumber
     Statut   = "En service"
 }
+
+New-Item -ItemType SymbolicLink -Path "C:\Users\Dell\Desktop\MACRO_ACTIVER_FILAIRE.ahk" -Target "C:\Users\Dell\Desktop\automation_ahk-main\MACRO_ACTIVER_FILAIRE\MACRO_ACTIVER_FILAIRE.ahk"
+New-Item -ItemType SymbolicLink -Path "C:\Users\Dell\Desktop\MACRO_RESET_JABRA.ahk" -Target "C:\Users\Dell\Desktop\automation_ahk-main\MACRO_RESET_JABRA\MACRO_RESET_JABRA.ahk"
+New-Item -ItemType SymbolicLink -Path "C:\Users\Dell\Desktop\MACRO_RESET_TEST_JABRA.ahk" -Target "C:\Users\Dell\Desktop\automation_ahk-main\MACRO_RESET_TEST_JABRA\MACRO_RESET_TEST_JABRA.ahk"
+New-Item -ItemType SymbolicLink -Path "C:\Users\Dell\Desktop\MACRO_TEST_MICRO.ahk" -Target "C:\Users\Dell\Desktop\automation_ahk-main\MACRO_TEST_MICRO\MACRO_TEST_MICRO.ahk"
+New-Item -ItemType SymbolicLink -Path "C:\Users\Dell\Desktop\MACRO_UPDATE_JABRA.ahk" -Target "C:\Users\Dell\Desktop\automation_ahk-main\MACRO_UPDATE_JABRA\MACRO_UPDATE_JABRA.ahk"
