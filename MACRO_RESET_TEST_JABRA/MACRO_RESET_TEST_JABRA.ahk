@@ -109,7 +109,7 @@ RunAutomation() {
         Sleep(100)
         Click()
         ToolTip("Bouton 5 cliqué !")
-        Sleep(2000)
+        Sleep(5000)
     } else {
         ToolTip("ERREUR : Bouton 5 introuvable !")
         Sleep(2000)
